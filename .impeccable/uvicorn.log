@@ -1,0 +1,50 @@
+INFO:     Loading environment from '.impeccable/env-clean.env'
+INFO:     Started server process [14480]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51275 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51284 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51285 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58585 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64429 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64430 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64431 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57611 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62786 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62786 - "GET /static/style.css?v=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53299 - "GET /static/app.js?v=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53299 - "GET /api/items HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55555 - "GET /api/items?category=juegos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54527 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54527 - "GET /static/style.css?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51679 - "GET /static/app.js?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51679 - "GET /api/items HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58760 - "GET /api/search?q=daredevil&category=series HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58760 - "POST /api/save HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60182 - "GET /api/items?category=comics HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:62202 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /static/style.css?v=7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64188 - "GET /static/app.js?v=6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64188 - "GET /api/items HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:58464 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58464 - "GET /static/style.css?v=7 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58464 - "GET /api/items HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:57154 - "GET /api/search?q=absolute%20batman&category=series HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58045 - "GET /api/search?q=absolute%20batman&category=comics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61375 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:49637 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:53918 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:61375 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:49637 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:53918 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:61375 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:61375 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:57886 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:57886 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:57886 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:62814 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:61981 - "POST /api/save HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:55668 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55668 - "GET /static/style.css?v=7 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55668 - "GET /api/items HTTP/1.1" 500 Internal Server Error
