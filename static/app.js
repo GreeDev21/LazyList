@@ -60,7 +60,7 @@ let activeView = settings.view || "grid";
 let captureCategory = "todo";
 
 function apiToItem(apiData) {
-  return {
+  return Object.assign({}, apiData, {
     id: apiData.id,
     category: apiData.category,
     title: apiData.title || apiData.titulo || apiData.nombre || apiData.title_romaji || "Sin título",
@@ -68,9 +68,8 @@ function apiToItem(apiData) {
     state: apiData.estado || "pendiente",
     demo: false,
     notas: apiData.notas || "",
-    calificacion: apiData.calificacion,
-    tienda: apiData.tienda
-  };
+    calificacion: apiData.calificacion
+  });
 }
 
 async function loadItems() {
@@ -359,6 +358,91 @@ let detailItem = null;
 let notesTimer;
 let notesHintTimer;
 
+function renderEditorialFields(item) {
+  const rows = [];
+  const addRow = (label, val, isLink = false) => {
+    if (val === null || val === undefined || val === "" || (Array.isArray(val) && val.length === 0)) return;
+    const displayVal = Array.isArray(val) ? val.join(", ") : val;
+    if (isLink) {
+      rows.push(`<div class="prow"><span class="prow-k">${label}</span><span class="prow-v"><a href="${escapeHtml(val)}" target="_blank" rel="noopener noreferrer" style="color:var(--color-violet);text-decoration:underline;word-break:break-all">${escapeHtml(val)}</a></span></div>`);
+    } else {
+      rows.push(`<div class="prow"><span class="prow-k">${label}</span><span class="prow-v">${escapeHtml(displayVal)}</span></div>`);
+    }
+  };
+
+  const cat = item.category;
+
+  if (cat === "peliculas") {
+    addRow("Título original", item.original_title);
+    addRow("Director", item.director);
+    addRow("Duración", item.duracion ? `${item.duracion} min` : null);
+    addRow("Lanzamiento", item.release_date);
+    addRow("País de origen", item.origin_country);
+    addRow("Géneros", item.genre);
+  } else if (cat === "series" || cat === "series_tvmaze") {
+    addRow("Título original", item.original_title);
+    addRow("Plataforma", item.plataform);
+    addRow("Estado", item.status);
+    addRow("Estreno", item.premiered);
+    addRow("Fin", item.ended);
+    addRow("País de origen", item.origin_country);
+    addRow("Géneros", item.genre);
+  } else if (cat === "anime") {
+    addRow("Título en inglés", item.title_english);
+    addRow("Título romaji", item.title_romaji);
+    addRow("Estado", item.status);
+    addRow("Episodios", item.episodios);
+    addRow("Estreno", item.premiered);
+    addRow("Fin", item.ended);
+    addRow("Géneros", item.genre);
+  } else if (cat === "mangas") {
+    addRow("Título en inglés", item.title_english);
+    addRow("Título romaji", item.title_romaji);
+    addRow("Autor", item.autor);
+    addRow("Estado", item.status);
+    addRow("Capítulos", item.capitulos);
+    addRow("Año", item.year);
+  } else if (cat === "comics") {
+    addRow("Editorial", item.publisher);
+    addRow("Escritor", item.escritor);
+    addRow("Estado", item.status);
+    addRow("Capítulos", item.capitulos);
+    addRow("Año", item.year);
+  } else if (cat === "novelas") {
+    addRow("Escritor", item.escritor);
+    addRow("Estado", item.status);
+    addRow("Capítulos", item.capitulos);
+    addRow("Año", item.year);
+    addRow("Géneros", item.genero);
+  } else if (cat === "libros") {
+    addRow("Autor", item.autor);
+    addRow("Saga", item.saga);
+    addRow("Orden", item.orden);
+    addRow("Año", item.ano);
+    addRow("Géneros", item.genero);
+  } else if (cat === "recursos") {
+    addRow("Enlace (URL)", item.url, true);
+    addRow("Creado por", item.creado_autor);
+    addRow("Tipo", item.tipo);
+    if (item.volver_a_ver !== undefined && item.volver_a_ver !== null) {
+      addRow("Volver a ver", item.volver_a_ver ? "Sí" : "No");
+    }
+  } else if (cat === "juegos") {
+    addRow("Tienda", item.tienda);
+    addRow("Mod/Edición", item.mod);
+  }
+
+  const container = $("#detail-editorial-rows");
+  const panel = $("#detail-editorial-panel");
+  if (rows.length === 0) {
+    panel.hidden = true;
+    container.innerHTML = "";
+  } else {
+    panel.hidden = false;
+    container.innerHTML = rows.join("");
+  }
+}
+
 function openDetail(item) {
   if ($("#detail-dialog").open) return;
   detailItem = item;
@@ -370,6 +454,9 @@ function openDetail(item) {
   $("#detail-sub").textContent = item.subtitle || "";
   $("#detail-chip").textContent = meta.label;
   $("#detail-state-chip").innerHTML = stateChipHTML(item.state);
+  
+  // Renderizar campos dinámicos de la categoría
+  renderEditorialFields(item);
   const stores = (item.tienda || "").split(",").map((s) => s.trim()).filter(Boolean);
   const storesBox = $(".dialog-body .detail-stores");
   if (storesBox) {

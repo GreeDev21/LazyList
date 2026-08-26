@@ -43,12 +43,12 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [ ] Ejecutar/aplicar la migración de base de datos correspondiente en SQLite para soportar la columna.
   - [ ] Adaptar el formulario de carga y la visualización del detalle en el frontend para soportar los géneros en la categoría Cómics.
 
-### [ ] Modal de detalle con datos hardcodeados
+### [x] Modal de detalle con datos hardcodeados
 - **Problema:** El modal de detalle del ítem muestra información genérica cableada en el HTML.
 - **Razón / Contexto:** En [`index.html`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/index.html#L181-L257), el modal `<dialog id="detail-dialog">` incluye datos estáticos como "Absolute Batman" y "DC Comics". Si el JS no los reemplaza correctamente para ciertos tipos de categorías, el usuario ve placeholders confusos.
 - **Definición de Hecho (DoD):**
-  - [ ] Asegurar que el cargador del modal en [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js) limpie o reemplace el 100% de los placeholders estáticos al abrir cualquier elemento.
-  - [ ] Comprobar que no queden textos hardcodeados de ejemplo visibles al abrir el modal de un ítem vacío o recién creado.
+  - [x] Asegurar que el cargador del modal en [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js) limpie o reemplace el 100% de los placeholders estáticos al abrir cualquier elemento.
+  - [x] Comprobar que no queden textos hardcodeados de ejemplo visibles al abrir el modal de un ítem vacío o recién creado.
 
 ### [ ] Botón para carga manual y opción masiva
 - **Problema:** Se necesita poder agregar elementos uno por uno y también en lote (bulk).
