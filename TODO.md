@@ -71,12 +71,12 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [ ] Centrar los `<dialog>` utilizando Flexbox/Grid o posicionamiento absoluto centrado en CSS [`style.css`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/style.css).
   - [ ] Implementar lógica dinámica en [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js) para ocultar/mostrar secciones de la ficha editorial según la categoría activa del elemento.
 
-### [ ] Logs y trazabilidad del sistema
+### [x] Logs y trazabilidad del sistema
 - **Problema:** Falta de logs del servidor ante fallos o llamadas API externas.
 - **Razón / Contexto:** Es crítico diagnosticar fallos silenciosos cuando las APIs de terceros (como Anilist, ComicVine, etc.) cambian de contrato o fallan.
 - **Definición de Hecho (DoD):**
-  - [ ] Configurar el módulo `logging` nativo de Python en FastAPI.
-  - [ ] Añadir logs en los bloques `try/except` críticos de los clientes de APIs externas ([`src/infrastructure/api_clients`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/infrastructure/api_clients)).
+  - [x] Configurar el módulo `logging` nativo de Python en FastAPI.
+  - [x] Añadir logs en los bloques `try/except` críticos de los clientes de APIs externas ([`src/infrastructure/api_clients`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/infrastructure/api_clients)).
 
 ### [ ] Detectar tipos de recursos (webs, playlist, artículos)
 - **Problema:** Analizar si realmente vale la pena categorizar los recursos por tipo.
