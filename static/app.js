@@ -651,7 +651,7 @@ function openDetail(item) {
   }
 
   // Configurar panel de enriquecimiento
-  const ENRICH_SUPPORTED = ["peliculas", "series", "anime", "mangas", "comics", "libros"];
+  const ENRICH_SUPPORTED = ["peliculas", "series", "anime", "mangas", "comics", "libros", "recursos"];
   const canEnrich = item.id.startsWith("manual_") && ENRICH_SUPPORTED.includes(item.category);
   const enrichPanel = $("#detail-enrich-panel");
   if (enrichPanel) {
