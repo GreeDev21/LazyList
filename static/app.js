@@ -93,7 +93,8 @@ async function updateItemAPI(item) {
       body: JSON.stringify({
         estado: item.state,
         notas: item.notas,
-        calificacion: item.calificacion
+        calificacion: item.calificacion,
+        volver_a_ver: item.volver_a_ver
       })
     });
   } catch (e) { console.error(e); }
@@ -457,6 +458,19 @@ function openDetail(item) {
   
   // Renderizar campos dinámicos de la categoría
   renderEditorialFields(item);
+
+  // Mostrar/ocultar controles adicionales para Recursos (volver a ver)
+  if (item.category === "recursos") {
+    $("#detail-recurso-divider").hidden = false;
+    $("#detail-recurso-fields").hidden = false;
+    const volverVer = item.volver_a_ver === true;
+    $("#detail-volver-ver").querySelectorAll(".seg-btn").forEach((btn) => {
+      btn.setAttribute("aria-pressed", (btn.dataset.val === "true") === volverVer);
+    });
+  } else {
+    $("#detail-recurso-divider").hidden = true;
+    $("#detail-recurso-fields").hidden = true;
+  }
   const stores = (item.tienda || "").split(",").map((s) => s.trim()).filter(Boolean);
   const storesBox = $(".dialog-body .detail-stores");
   if (storesBox) {
@@ -558,6 +572,18 @@ $("#detail-state").addEventListener("click", async (e) => {
   detailItem.state = btn.dataset.state;
   await updateItemAPI(detailItem);
   $("#detail-state").querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b === btn));
+  render();
+});
+
+$("#detail-volver-ver").addEventListener("click", async (e) => {
+  if (!detailItem) return;
+  const btn = e.target.closest(".seg-btn");
+  if (!btn) return;
+  const val = btn.dataset.val === "true";
+  detailItem.volver_a_ver = val;
+  await updateItemAPI(detailItem);
+  $("#detail-volver-ver").querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b === btn));
+  renderEditorialFields(detailItem);
   render();
 });
 
