@@ -78,14 +78,23 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [x] Configurar el módulo `logging` nativo de Python en FastAPI.
   - [x] Añadir logs en los bloques `try/except` críticos de los clientes de APIs externas ([`src/infrastructure/api_clients`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/infrastructure/api_clients)).
 
-### [ ] Detectar tipos de recursos (webs, playlist, artículos)
+### [x] Detectar tipos de recursos (webs, playlist, artículos)
 - **Problema:** Analizar si realmente vale la pena categorizar los recursos por tipo.
 - **Razón / Contexto:** Nota escrita en libreta de la cual no se recuerda la motivación exacta.
 - **Definición de Hecho (DoD):**
-  - [ ] Definir si aporta valor clasificar un "recurso" o si con la URL y la descripción general ya es suficiente. Si se descarta, eliminar la columna `tipo` de la entidad [`Recurso`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py#L106).
+  - [x] Definir si aporta valor clasificar un "recurso" o si con la URL y la descripción general ya es suficiente. Si se descarta, eliminar la columna `tipo` de la entidad [`Recurso`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py#L106).
 
-### [ ] Revisar formulario de carga manual
+### [x] Revisar formulario de carga manual
 - **Problema:** El formulario manual es muy genérico y no permite parametrizar datos finos.
 - **Razón / Contexto:** Consecuencia del ítem de géneros vacíos en cómics: si la carga manual no expone campos específicos de la categoría seleccionada, la base de datos queda incompleta.
 - **Definición de Hecho (DoD):**
-  - [ ] Modificar el formulario de carga manual para que al cambiar de categoría muestre u oculte inputs específicos (ej. escritor para cómics, autor para libros, url para recursos).
+  - [x] Modificar el formulario de carga manual para que al cambiar de categoría muestre u oculte inputs específicos (ej. escritor para cómics, autor para libros, url para recursos).
+
+### [ ] Obtener imágenes para los ítems guardados
+- **Problema:** Los elementos guardados en la colección no muestran o no resuelven correctamente sus imágenes de portada/preview asociadas desde las APIs externas o el scraping.
+- **Razón / Contexto:** Para lograr la experiencia claymórfica visual tipo "estante de colección", cada tarjeta necesita mostrar la portada real del libro, juego, película o recurso en lugar de un marcador genérico de color.
+- **Definición de Hecho (DoD):**
+  - [ ] Verificar que los clientes de API externa extraigan y retornen las URLs de las imágenes de portada (ej. TMDB poster_path, Google Books imageLinks, IGDB cover, etc.).
+  - [ ] Guardar la URL o referencia de la imagen en la base de datos para cada entidad correspondiente en `src/domain/entities.py`.
+  - [ ] Adaptar el frontend (`app.js` y `index.html`) para renderizar las imágenes de portada en la grilla y el modal de detalle, incluyendo un fallback estilizado cuando no haya imagen disponible.
+

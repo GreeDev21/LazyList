@@ -361,7 +361,6 @@ function renderManualFields(category) {
   } else if (category === "recursos") {
     addTextField("url", "Enlace (URL)", "https://ejemplo.com/recurso", true);
     addTextField("creado_autor", "Creado por", "Canal o autor del recurso...");
-    addTextField("tipo", "Tipo", "Video, Artículo, Repositorio, Playlist...");
     fields.push(`
       <div class="field">
         <label>¿Volver a ver?</label>
@@ -542,7 +541,6 @@ function renderEditorialFields(item) {
   } else if (cat === "recursos") {
     addRow("Enlace (URL)", item.url, true);
     addRow("Creado por", item.creado_autor);
-    addRow("Tipo", item.tipo);
     if (item.volver_a_ver !== undefined && item.volver_a_ver !== null) {
       addRow("Volver a ver", item.volver_a_ver ? "Sí" : "No");
     }

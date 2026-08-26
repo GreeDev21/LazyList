@@ -103,7 +103,6 @@ class Recurso(SQLModel, table=True):
     creado_autor: Optional[str] = None
     volver_a_ver: Optional[bool] = None
     notas: Optional[str] = None
-    tipo: Optional[str] = None
     calificacion: Optional[int] = None
 
 class Juego(SQLModel, table=True):

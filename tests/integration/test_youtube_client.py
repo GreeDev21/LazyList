@@ -46,7 +46,6 @@ def test_get_youtube_details(youtube_client):
     assert "Never Gonna Give You Up" in details["titulo"]
     assert details["url"] == url
     assert details["creado_autor"] == "Rick Astley"
-    assert details["tipo"] == "Video"
 
 def test_unsupported_category(youtube_client):
     with pytest.raises(NotImplementedError):
