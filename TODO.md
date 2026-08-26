@@ -28,12 +28,12 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [x] Ubicar los archivos frontend: confirmados en el directorio `/static` ([`index.html`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/index.html), [`style.css`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/style.css), [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js)). FastAPI los monta en [`main.py`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/api/main.py#L63).
   - [x] Documentar detalladamente esta arquitectura en [`docs/arquitectura.md`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/docs/arquitectura.md) para evitar futuras confusiones.
 
-### [ ] Comportamiento y origen de datos de YouTube
+### [x] Comportamiento y origen de datos de YouTube
 - **Problema:** Cargar un video de YouTube no extrae el nombre del canal.
 - **Razón / Contexto:** Actualmente **no** se usa la API oficial de YouTube. El sistema usa un scraper estático genérico (`UrlScraperClient` en [`generic_scraper_client.py`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/infrastructure/api_clients/generic_scraper_client.py)) que procesa etiquetas OpenGraph (`og:title`, `og:description`) con la librería `selectolax` de forma síncrona. Como YouTube se renderiza vía JS y bloquea bots básicos, no se obtiene el canal sin consultar la API o utilizar un parser dedicado.
 - **Definición de Hecho (DoD):**
-  - [ ] Decidir si se implementará la API de YouTube oficial o si se extenderá el scraper para interceptar metadata de canales en URLs de tipo `youtube.com/watch` / `youtu.be`.
-  - [ ] Lograr que, al ingresar un enlace de YouTube, el campo "Autor" u homólogo se complete automáticamente con el nombre del canal.
+  - [x] Decidir si se implementará la API de YouTube oficial o si se extenderá el scraper para interceptar metadata de canales en URLs de tipo `youtube.com/watch` / `youtu.be`.
+  - [x] Lograr que, al ingresar un enlace de YouTube, el campo "Autor" u homólogo se complete automáticamente con el nombre del canal.
 
 ### [ ] Géneros vacíos en cómics
 - **Problema:** Los cómics guardados manualmente o por API no muestran géneros.
