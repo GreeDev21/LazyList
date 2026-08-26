@@ -123,6 +123,81 @@ def create_manual_item(req: ManualItemRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class BulkItemRequest(BaseModel):
+    category: str
+    estado: str
+    items: List[str]
+
+class EnrichRequest(BaseModel):
+    category: str
+    id: str
+    api_id: str
+
+@app.post("/api/items/bulk")
+def create_bulk_items(req: BulkItemRequest):
+    try:
+        repo = repos.get(req.category)
+        if not repo:
+            raise HTTPException(status_code=400, detail="Categoría inválida")
+        
+        import inspect
+        entity_class = inspect.signature(repo.save).parameters['item'].annotation
+        
+        created_items = []
+        import uuid
+        
+        with db.get_session() as session:
+            for title in req.items:
+                item_id = f"manual_{uuid.uuid4().hex[:8]}"
+                kwargs = {"id": item_id, "estado": req.estado}
+                
+                if hasattr(entity_class, 'title'):
+                    kwargs['title'] = title
+                elif hasattr(entity_class, 'title_romaji'):
+                    kwargs['title_romaji'] = title
+                elif hasattr(entity_class, 'titulo'):
+                    kwargs['titulo'] = title
+                    
+                item = entity_class(**kwargs)
+                session.merge(item)
+                
+                r_dict = item.model_dump()
+                r_dict["category"] = req.category
+                created_items.append(r_dict)
+                
+            session.commit()
+            
+        return created_items
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/items/enrich")
+def enrich_manual_item(req: EnrichRequest):
+    try:
+        repo = repos.get(req.category)
+        if not repo:
+            raise HTTPException(status_code=400, detail="Categoría inválida")
+            
+        raw_data = api_router.get_details(req.api_id, req.category)
+        
+        item = repo.get_by_id(req.id)
+        if not item:
+            raise HTTPException(status_code=404, detail="Elemento no encontrado")
+            
+        for k, v in raw_data.items():
+            if k in ["id", "notas", "calificacion", "estado"]:
+                continue
+            if hasattr(item, k):
+                setattr(item, k, v)
+                
+        repo.save(item)
+        
+        r_dict = item.model_dump()
+        r_dict["category"] = req.category
+        return r_dict
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 class UpdateRequest(BaseModel):
     estado: Optional[str] = None
     notas: Optional[str] = None

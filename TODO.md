@@ -35,13 +35,7 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [x] Decidir si se implementará la API de YouTube oficial o si se extenderá el scraper para interceptar metadata de canales en URLs de tipo `youtube.com/watch` / `youtu.be`.
   - [x] Lograr que, al ingresar un enlace de YouTube, el campo "Autor" u homólogo se complete automáticamente con el nombre del canal.
 
-### [ ] Géneros vacíos en cómics
-- **Problema:** Los cómics guardados manualmente o por API no muestran géneros.
-- **Razón / Contexto:** La entidad [`Comic`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py#L62-L73) en el backend directamente no posee un atributo `genre` o `genero` definido, a diferencia de otras entidades como `Pelicula` o `Serie`.
-- **Definición de Hecho (DoD):**
-  - [ ] Agregar el campo `genero: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))` en la clase `Comic` en [`entities.py`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py).
-  - [ ] Ejecutar/aplicar la migración de base de datos correspondiente en SQLite para soportar la columna.
-  - [ ] Adaptar el formulario de carga y la visualización del detalle en el frontend para soportar los géneros en la categoría Cómics.
+
 
 ### [x] Modal de detalle con datos hardcodeados
 - **Problema:** El modal de detalle del ítem muestra información genérica cableada en el HTML.
@@ -50,12 +44,12 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [x] Asegurar que el cargador del modal en [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js) limpie o reemplace el 100% de los placeholders estáticos al abrir cualquier elemento.
   - [x] Comprobar que no queden textos hardcodeados de ejemplo visibles al abrir el modal de un ítem vacío o recién creado.
 
-### [ ] Botón para carga manual y opción masiva
+### [x] Botón para carga manual y opción masiva
 - **Problema:** Se necesita poder agregar elementos uno por uno y también en lote (bulk).
 - **Razón / Contexto:** Agilizar la carga inicial cuando se migran listas grandes de contenido desde otras plataformas.
 - **Definición de Hecho (DoD):**
-  - [ ] Diseñar y programar una interfaz (dentro del modal manual o en una vista dedicada) para pegar múltiples líneas/URLs/títulos.
-  - [ ] Modificar el endpoint del backend para procesar colecciones de ítems y retornarlos de forma eficiente en un solo batch.
+  - [x] Diseñar y programar una interfaz (dentro del modal manual o en una vista dedicada) para pegar múltiples líneas/URLs/títulos.
+  - [x] Modificar el endpoint del backend para procesar colecciones de ítems y retornarlos de forma eficiente en un solo batch.
 
 ### [x] Eliminación de opciones NSFW
 - **Problema:** Quitar las opciones y marcas NSFW de la aplicación.

@@ -149,20 +149,43 @@
     </button>
   </div>
   <div class="dialog-body">
+    <div class="segmented" id="manual-mode-tabs" role="group" aria-label="Modo de carga" style="margin-bottom: 1.25rem; width: 100%; display: flex;">
+      <button type="button" class="seg-btn" data-mode="single" aria-pressed="true" style="flex: 1; text-align: center;">Individual</button>
+      <button type="button" class="seg-btn" data-mode="bulk" aria-pressed="false" style="flex: 1; text-align: center;">En lote</button>
+    </div>
+    
     <form id="manual-form" autocomplete="off">
-      <div class="field">
-        <label for="manual-title-input">¿Qué querés guardar?</label>
-        <input id="manual-title-input" type="text" placeholder="Título, nombre o URL…" required maxlength="120">
+      <!-- Sección carga individual -->
+      <div id="manual-single-fields">
+        <div class="field">
+          <label for="manual-title-input">¿Qué querés guardar?</label>
+          <input id="manual-title-input" type="text" placeholder="Título, nombre o URL…" required maxlength="120">
+        </div>
+        <div class="field">
+          <label>Categoría</label>
+          <div class="cat-pills" id="manual-cats" role="group" aria-label="Categoría"></div>
+        </div>
+        <div id="manual-dynamic-fields">
+          <!-- Se completa dinámicamente según la categoría activa -->
+        </div>
       </div>
-      <div class="field">
-        <label>Categoría</label>
-        <div class="cat-pills" id="manual-cats" role="group" aria-label="Categoría"></div>
+
+      <!-- Sección carga masiva -->
+      <div id="manual-bulk-fields" hidden>
+        <div class="field">
+          <label>Categoría</label>
+          <div class="cat-pills" id="manual-bulk-cats" role="group" aria-label="Categoría"></div>
+        </div>
+        <div class="field">
+          <label for="manual-bulk-textarea">Elementos a guardar (uno por línea)</label>
+          <div class="field">
+            <textarea id="manual-bulk-textarea" placeholder="Título 1&#10;Título 2&#10;https://ejemplo.com/recurso" rows="8"></textarea>
+          </div>
+        </div>
       </div>
-      <div id="manual-dynamic-fields">
-        <!-- Se completa dinámicamente según la categoría activa -->
-      </div>
+
       <div class="field">
-        <label>Estado</label>
+        <label>Estado inicial</label>
         <div class="segmented" id="manual-state" role="group" aria-label="Estado">
           <button type="button" class="seg-btn" data-state="pendiente" aria-pressed="true">Pendiente</button>
           <button type="button" class="seg-btn" data-state="en_curso" aria-pressed="false">En curso</button>
@@ -201,6 +224,26 @@
           </div>
         </div>
       </div>
+
+      <section class="panel panel-enrich" id="detail-enrich-panel" hidden>
+        <div class="panel-head" style="align-items: center;">
+          <span class="panel-title">Metadatos externos</span>
+          <button type="button" class="btn-ghost btn-sm" id="detail-enrich-toggle" style="margin-left: auto; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 0.9rem; height: 0.9rem;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+            <span>Vincular con API</span>
+          </button>
+        </div>
+        
+        <div id="detail-enrich-search-box" hidden style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div class="field" style="display: flex; gap: 0.5rem; width: 100%; align-items: center;">
+            <input type="text" id="detail-enrich-query" placeholder="Buscar título en API..." style="flex: 1;">
+            <button type="button" class="btn-primary" id="detail-enrich-search-btn" style="padding: 0.42rem 1.15rem;">Buscar</button>
+          </div>
+          <div id="detail-enrich-results" class="panel-rows" style="max-height: 12rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.25rem;">
+            <!-- Resultados de la búsqueda -->
+          </div>
+        </div>
+      </section>
 
       <section class="panel panel-editorial" id="detail-editorial-panel">
         <div class="panel-head">

@@ -409,9 +409,21 @@ function seedManualCategories() {
 }
 
 $("#btn-manual").addEventListener("click", () => {
+  manualMode = "single";
+  const modeTabs = $("#manual-mode-tabs");
+  if (modeTabs) {
+    modeTabs.querySelectorAll(".seg-btn").forEach((b) => {
+      b.setAttribute("aria-pressed", b.dataset.mode === "single");
+    });
+  }
+  $("#manual-single-fields").hidden = false;
+  $("#manual-bulk-fields").hidden = true;
+
   seedManualCategories();
   $("#manual-state").querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b.dataset.state === manualState));
   $("#manual-title-input").value = "";
+  const bulkTextarea = $("#manual-bulk-textarea");
+  if (bulkTextarea) bulkTextarea.value = "";
   $("#manual-dialog").showModal();
   $("#manual-title-input").focus();
 });
@@ -425,50 +437,89 @@ $("#manual-state").addEventListener("click", (e) => {
 
 $("#manual-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const title = $("#manual-title-input").value.trim();
-  if (!title) { $("#manual-title-input").focus(); return; }
   
-  const extraFields = {};
-  const container = $("#manual-dynamic-fields");
-  if (container) {
-    container.querySelectorAll("input[data-field]").forEach((inp) => {
-      let val = inp.value.trim();
-      if (val !== "") {
-        if (inp.type === "number") {
-          val = Number(val);
+  if (manualMode === "single") {
+    const title = $("#manual-title-input").value.trim();
+    if (!title) { $("#manual-title-input").focus(); return; }
+    
+    const extraFields = {};
+    const container = $("#manual-dynamic-fields");
+    if (container) {
+      container.querySelectorAll("input[data-field]").forEach((inp) => {
+        let val = inp.value.trim();
+        if (val !== "") {
+          if (inp.type === "number") {
+            val = Number(val);
+          }
+          extraFields[inp.dataset.field] = val;
         }
-        extraFields[inp.dataset.field] = val;
-      }
-    });
-    const volverVerActive = container.querySelector("#manual-f-volver_a_ver .seg-btn[aria-pressed='true']");
-    if (volverVerActive) {
-      extraFields["volver_a_ver"] = volverVerActive.dataset.val === "true";
-    }
-  }
-
-  const meta = catMeta(manualCategory);
-  
-  try {
-      const res = await fetch(`${API_BASE}/items/manual`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-              category: manualCategory, 
-              titulo: title, 
-              estado: manualState,
-              fields: extraFields
-          })
       });
-      if (res.ok) {
-          const data = await res.json();
-          const item = apiToItem(data);
-          items.push(item);
+      const volverVerActive = container.querySelector("#manual-f-volver_a_ver .seg-btn[aria-pressed='true']");
+      if (volverVerActive) {
+        extraFields["volver_a_ver"] = volverVerActive.dataset.val === "true";
       }
-  } catch (e) { console.error(e); }
+    }
 
-  $("#manual-dialog").close();
-  render();
-  toast(`Guardado en ${meta.label}`);
+    const meta = catMeta(manualCategory);
+    
+    try {
+        const res = await fetch(`${API_BASE}/items/manual`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                category: manualCategory, 
+                titulo: title, 
+                estado: manualState,
+                fields: extraFields
+            })
+        });
+        if (res.ok) {
+            const data = await res.json();
+            const item = apiToItem(data);
+            items.push(item);
+        }
+    } catch (err) { console.error(err); }
+    
+    $("#manual-dialog").close();
+    render();
+    toast(`Guardado en ${meta.label}`);
+  } else {
+    const text = $("#manual-bulk-textarea").value.trim();
+    if (!text) { $("#manual-bulk-textarea").focus(); return; }
+    
+    const rawLines = text.split("\n");
+    const cleanedLines = rawLines.map((line) => {
+      return line.trim()
+        .replace(/^[\s\-*•\d\.)]+/, "") // Limpia guiones, viñetas y números iniciales
+        .trim();
+    }).filter(Boolean);
+    
+    if (cleanedLines.length === 0) { $("#manual-bulk-textarea").focus(); return; }
+    
+    const meta = catMeta(bulkCategory);
+    
+    try {
+        const res = await fetch(`${API_BASE}/items/bulk`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                category: bulkCategory, 
+                estado: manualState,
+                items: cleanedLines
+            })
+        });
+        if (res.ok) {
+            const dataList = await res.json();
+            dataList.forEach((data) => {
+                items.push(apiToItem(data));
+            });
+        }
+    } catch (err) { console.error(err); }
+    
+    $("#manual-dialog").close();
+    render();
+    toast(`Guardados ${cleanedLines.length} ítems en ${meta.label}`);
+  }
 });
 
 /* --- detail dialog -------------------------------------------------------- */
@@ -587,6 +638,18 @@ function openDetail(item) {
     $("#detail-recurso-divider").hidden = true;
     $("#detail-recurso-fields").hidden = true;
   }
+
+  // Configurar panel de enriquecimiento
+  const ENRICH_SUPPORTED = ["peliculas", "series", "anime", "mangas", "comics", "libros"];
+  const canEnrich = item.id.startsWith("manual_") && ENRICH_SUPPORTED.includes(item.category);
+  const enrichPanel = $("#detail-enrich-panel");
+  if (enrichPanel) {
+    enrichPanel.hidden = !canEnrich;
+    $("#detail-enrich-search-box").hidden = true;
+    $("#detail-enrich-query").value = item.title;
+    $("#detail-enrich-results").innerHTML = "";
+  }
+
   const stores = (item.tienda || "").split(",").map((s) => s.trim()).filter(Boolean);
   const storesBox = $(".dialog-body .detail-stores");
   if (storesBox) {
@@ -711,6 +774,148 @@ $("#detail-delete").addEventListener("click", async () => {
   render();
   toast("Ítem eliminado");
 });
+
+let bulkCategory = null;
+function seedBulkCategories() {
+  const pick = activeCategory !== "todo" ? activeCategory : CATEGORIES[1].key;
+  bulkCategory = pick;
+  const box = $("#manual-bulk-cats");
+  if (!box) return;
+  box.innerHTML = CATEGORIES.filter((c) => c.key !== "todo").map((c) => `
+    <button type="button" class="cat-pill" data-cat="${c.key}" aria-pressed="${c.key === pick}">
+      ${ICONS[c.glyph]}<span>${c.label}</span>
+    </button>`).join("");
+  box.querySelectorAll(".cat-pill").forEach((b) => {
+    b.addEventListener("click", () => {
+      bulkCategory = b.dataset.cat;
+      box.querySelectorAll(".cat-pill").forEach((p) => p.setAttribute("aria-pressed", p === b));
+    });
+  });
+}
+
+let manualMode = "single";
+const modeTabs = $("#manual-mode-tabs");
+if (modeTabs) {
+  modeTabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".seg-btn");
+    if (!btn) return;
+    manualMode = btn.dataset.mode;
+    modeTabs.querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b === btn));
+    if (manualMode === "single") {
+      $("#manual-single-fields").hidden = false;
+      $("#manual-bulk-fields").hidden = true;
+    } else {
+      $("#manual-single-fields").hidden = true;
+      $("#manual-bulk-fields").hidden = false;
+      seedBulkCategories();
+    }
+  });
+}
+
+const enrichToggle = $("#detail-enrich-toggle");
+if (enrichToggle) {
+  enrichToggle.addEventListener("click", () => {
+    const box = $("#detail-enrich-search-box");
+    if (box) box.hidden = !box.hidden;
+  });
+}
+
+async function runEnrichSearch() {
+  const query = $("#detail-enrich-query").value.trim();
+  if (!query || !detailItem) return;
+  const resultsBox = $("#detail-enrich-results");
+  if (!resultsBox) return;
+  resultsBox.innerHTML = `<div class="prow" style="justify-content:center"><span class="prow-v">Buscando...</span></div>`;
+  
+  try {
+    const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&category=${detailItem.category}`);
+    if (res.ok) {
+      const results = await res.json();
+      if (results.length === 0) {
+        resultsBox.innerHTML = `<div class="prow" style="justify-content:center"><span class="prow-v">Sin resultados.</span></div>`;
+        return;
+      }
+      resultsBox.innerHTML = results.map((r) => {
+        const yearText = r.year ? ` (${r.year})` : "";
+        return `
+          <button type="button" class="prow" data-api-id="${r.api_id}" style="text-align: left; width: 100%; border: 0; background: transparent; cursor: pointer; padding: 0.6rem 0.4rem; display: block; border-radius: 8px;">
+            <span class="prow-v" style="font-weight: 700; color: var(--color-ink);">${escapeHtml(r.title)}${escapeHtml(yearText)}</span>
+            <p style="font-size: 0.72rem; color: var(--color-ink-3); margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${escapeHtml(r.overview || "")}</p>
+          </button>
+        `;
+      }).join("");
+      
+      resultsBox.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => selectEnrichMatch(btn.dataset.apiId));
+      });
+    } else {
+      resultsBox.innerHTML = `<div class="prow" style="justify-content:center"><span class="prow-v" style="color:var(--color-rose)">Error en la búsqueda.</span></div>`;
+    }
+  } catch (err) {
+    console.error(err);
+    resultsBox.innerHTML = `<div class="prow" style="justify-content:center"><span class="prow-v" style="color:var(--color-rose)">Error de red.</span></div>`;
+  }
+}
+
+async function selectEnrichMatch(apiId) {
+  if (!detailItem) return;
+  const resultsBox = $("#detail-enrich-results");
+  if (resultsBox) {
+    resultsBox.innerHTML = `<div class="prow" style="justify-content:center"><span class="prow-v">Vinculando metadatos...</span></div>`;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/items/enrich`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: detailItem.category,
+        id: detailItem.id,
+        api_id: apiId
+      })
+    });
+    if (res.ok) {
+      const updatedData = await res.json();
+      const enrichedItem = apiToItem(updatedData);
+      
+      const index = items.findIndex((i) => i.id === detailItem.id);
+      if (index !== -1) {
+        items[index] = enrichedItem;
+      }
+      
+      detailItem = enrichedItem;
+      
+      const enrichPanel = $("#detail-enrich-panel");
+      if (enrichPanel) enrichPanel.hidden = true;
+      $("#detail-title-text").textContent = enrichedItem.title;
+      $("#detail-sub").textContent = enrichedItem.subtitle || "";
+      renderEditorialFields(enrichedItem);
+      render();
+      toast("Metadatos vinculados correctamente");
+    } else {
+      toast("Error al vincular metadatos");
+      if (resultsBox) resultsBox.innerHTML = "";
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Error de red al vincular");
+    if (resultsBox) resultsBox.innerHTML = "";
+  }
+}
+
+const enrichSearchBtn = $("#detail-enrich-search-btn");
+if (enrichSearchBtn) {
+  enrichSearchBtn.addEventListener("click", runEnrichSearch);
+}
+const enrichQueryInput = $("#detail-enrich-query");
+if (enrichQueryInput) {
+  enrichQueryInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      runEnrichSearch();
+    }
+  });
+}
 
 $("#grid").addEventListener("click", (e) => {
   if (e.target.closest("button[data-act]")) return;
