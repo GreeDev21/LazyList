@@ -494,7 +494,18 @@ $("#manual-form").addEventListener("submit", async (e) => {
         .trim();
     }).filter(Boolean);
     
-    if (cleanedLines.length === 0) { $("#manual-bulk-textarea").focus(); return; }
+    // Deduplicar en el lote usando un Set (insensible a mayúsculas/minúsculas)
+    const seen = new Set();
+    const uniqueLines = [];
+    for (const line of cleanedLines) {
+      const lower = line.toLowerCase();
+      if (!seen.has(lower)) {
+        seen.add(lower);
+        uniqueLines.push(line);
+      }
+    }
+    
+    if (uniqueLines.length === 0) { $("#manual-bulk-textarea").focus(); return; }
     
     const meta = catMeta(bulkCategory);
     
@@ -505,7 +516,7 @@ $("#manual-form").addEventListener("submit", async (e) => {
             body: JSON.stringify({ 
                 category: bulkCategory, 
                 estado: manualState,
-                items: cleanedLines
+                items: uniqueLines
             })
         });
         if (res.ok) {

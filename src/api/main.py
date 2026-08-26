@@ -147,7 +147,29 @@ def create_bulk_items(req: BulkItemRequest):
         import uuid
         
         with db.get_session() as session:
+            from sqlalchemy import func
+            from sqlmodel import select
+            
+            # Obtener el atributo correspondiente al título para comprobación de repetidos
+            title_attr = None
+            if hasattr(entity_class, 'title'):
+                title_attr = entity_class.title
+            elif hasattr(entity_class, 'title_romaji'):
+                title_attr = entity_class.title_romaji
+            elif hasattr(entity_class, 'titulo'):
+                title_attr = entity_class.titulo
+                
             for title in req.items:
+                # Comprobar duplicado en la base de datos (case-insensitive)
+                existing = None
+                if req.category == "recursos":
+                    existing = session.exec(select(entity_class).where(func.lower(entity_class.url) == title.lower())).first()
+                elif title_attr is not None:
+                    existing = session.exec(select(entity_class).where(func.lower(title_attr) == title.lower())).first()
+                    
+                if existing is not None:
+                    continue  # Si ya existe, saltear para evitar duplicados
+                
                 item_id = f"manual_{uuid.uuid4().hex[:8]}"
                 kwargs = {"id": item_id, "estado": req.estado}
                 
@@ -157,6 +179,9 @@ def create_bulk_items(req: BulkItemRequest):
                     kwargs['title_romaji'] = title
                 elif hasattr(entity_class, 'titulo'):
                     kwargs['titulo'] = title
+                    
+                if hasattr(entity_class, 'url'):
+                    kwargs['url'] = title
                     
                 item = entity_class(**kwargs)
                 session.merge(item)
