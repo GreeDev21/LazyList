@@ -296,6 +296,98 @@ $("#btn-clear-demo").addEventListener("click", () => {
 let manualCategory = null;
 let manualState = "pendiente";
 
+function renderManualFields(category) {
+  const container = $("#manual-dynamic-fields");
+  if (!container) return;
+
+  const fields = [];
+
+  const addTextField = (name, label, placeholder, required = false) => {
+    fields.push(`
+      <div class="field">
+        <label for="manual-f-${name}">${label}</label>
+        <input id="manual-f-${name}" type="text" data-field="${name}" placeholder="${placeholder}" ${required ? "required" : ""}>
+      </div>
+    `);
+  };
+
+  const addNumberField = (name, label, placeholder, min = 0) => {
+    fields.push(`
+      <div class="field">
+        <label for="manual-f-${name}">${label}</label>
+        <input id="manual-f-${name}" type="number" data-field="${name}" placeholder="${placeholder}" min="${min}">
+      </div>
+    `);
+  };
+
+  if (category === "peliculas") {
+    addTextField("original_title", "Título original", "Título en idioma original...");
+    addTextField("director", "Director", "Director de la película...");
+    addNumberField("duracion", "Duración", "Duración en minutos...");
+    addTextField("release_date", "Lanzamiento", "Año o fecha de lanzamiento...");
+  } else if (category === "series") {
+    addTextField("original_title", "Título original", "Título en idioma original...");
+    addTextField("plataform", "Plataforma", "Netflix, HBO Max, Prime Video...");
+    addTextField("status", "Estado de emisión", "En emisión, Finalizada...");
+    addTextField("premiered", "Estreno", "Año o fecha de estreno...");
+  } else if (category === "anime") {
+    addTextField("title_english", "Título en inglés", "English title...");
+    addTextField("title_romaji", "Título romaji", "Romaji title...");
+    addTextField("status", "Estado de emisión", "En emisión, Finalizado...");
+    addNumberField("episodios", "Episodios", "Cantidad de episodios...");
+  } else if (category === "mangas") {
+    addTextField("title_english", "Título en inglés", "English title...");
+    addTextField("title_romaji", "Título romaji", "Romaji title...");
+    addTextField("autor", "Autor", "Nombre del mangaka...");
+    addTextField("status", "Estado", "En publicación, Finalizado...");
+    addNumberField("capitulos", "Capítulos", "Cantidad de capítulos...");
+    addNumberField("year", "Año", "Año de publicación...");
+  } else if (category === "comics") {
+    addTextField("publisher", "Editorial", "DC, Marvel, Image...");
+    addTextField("escritor", "Escritor", "Nombre del escritor/guionista...");
+    addTextField("status", "Estado", "En publicación, Finalizado...");
+    addNumberField("capitulos", "Capítulos", "Cantidad de capítulos/números...");
+    addNumberField("year", "Año", "Año de publicación...");
+  } else if (category === "novelas") {
+    addTextField("escritor", "Escritor", "Nombre del escritor...");
+    addTextField("status", "Estado", "En publicación, Finalizada...");
+    addNumberField("capitulos", "Capítulos", "Cantidad de capítulos...");
+    addNumberField("year", "Año", "Año de publicación...");
+  } else if (category === "libros") {
+    addTextField("autor", "Autor", "Nombre del autor...");
+    addTextField("saga", "Saga", "Nombre de la saga (si aplica)...");
+    addNumberField("orden", "Orden", "Número de orden en la saga...");
+    addNumberField("ano", "Año", "Año de publicación...");
+  } else if (category === "recursos") {
+    addTextField("url", "Enlace (URL)", "https://ejemplo.com/recurso", true);
+    addTextField("creado_autor", "Creado por", "Canal o autor del recurso...");
+    addTextField("tipo", "Tipo", "Video, Artículo, Repositorio, Playlist...");
+    fields.push(`
+      <div class="field">
+        <label>¿Volver a ver?</label>
+        <div class="segmented" id="manual-f-volver_a_ver" role="group" aria-label="Volver a ver">
+          <button type="button" class="seg-btn" data-val="true" aria-pressed="false">Sí</button>
+          <button type="button" class="seg-btn" data-val="false" aria-pressed="true">No</button>
+        </div>
+      </div>
+    `);
+  } else if (category === "juegos") {
+    addTextField("tienda", "Tienda", "Steam, Epic Games Store, GOG, Itch.io...");
+    addTextField("mod", "Mod/Edición", "Edición Deluxe, Mods aplicados...");
+  }
+
+  container.innerHTML = fields.join("");
+
+  const volverVerSeg = $("#manual-f-volver_a_ver");
+  if (volverVerSeg) {
+    volverVerSeg.addEventListener("click", (e) => {
+      const btn = e.target.closest(".seg-btn");
+      if (!btn) return;
+      volverVerSeg.querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b === btn));
+    });
+  }
+}
+
 function seedManualCategories() {
   const pick = activeCategory !== "todo" ? activeCategory : CATEGORIES[1].key;
   manualCategory = pick;
@@ -304,10 +396,15 @@ function seedManualCategories() {
     <button type="button" class="cat-pill" data-cat="${c.key}" aria-pressed="${c.key === pick}">
       ${ICONS[c.glyph]}<span>${c.label}</span>
     </button>`).join("");
+  
+  // Renderizar campos iniciales
+  renderManualFields(pick);
+
   box.querySelectorAll(".cat-pill").forEach((b) => {
     b.addEventListener("click", () => {
       manualCategory = b.dataset.cat;
       box.querySelectorAll(".cat-pill").forEach((p) => p.setAttribute("aria-pressed", p === b));
+      renderManualFields(manualCategory);
     });
   });
 }
@@ -316,7 +413,6 @@ $("#btn-manual").addEventListener("click", () => {
   seedManualCategories();
   $("#manual-state").querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b.dataset.state === manualState));
   $("#manual-title-input").value = "";
-  $("#manual-sub-input").value = "";
   $("#manual-dialog").showModal();
   $("#manual-title-input").focus();
 });
@@ -332,19 +428,41 @@ $("#manual-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const title = $("#manual-title-input").value.trim();
   if (!title) { $("#manual-title-input").focus(); return; }
-  const subtitle = $("#manual-sub-input").value.trim();
+  
+  const extraFields = {};
+  const container = $("#manual-dynamic-fields");
+  if (container) {
+    container.querySelectorAll("input[data-field]").forEach((inp) => {
+      let val = inp.value.trim();
+      if (val !== "") {
+        if (inp.type === "number") {
+          val = Number(val);
+        }
+        extraFields[inp.dataset.field] = val;
+      }
+    });
+    const volverVerActive = container.querySelector("#manual-f-volver_a_ver .seg-btn[aria-pressed='true']");
+    if (volverVerActive) {
+      extraFields["volver_a_ver"] = volverVerActive.dataset.val === "true";
+    }
+  }
+
   const meta = catMeta(manualCategory);
   
   try {
       const res = await fetch(`${API_BASE}/items/manual`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category: manualCategory, titulo: title, estado: manualState })
+          body: JSON.stringify({ 
+              category: manualCategory, 
+              titulo: title, 
+              estado: manualState,
+              fields: extraFields
+          })
       });
       if (res.ok) {
           const data = await res.json();
           const item = apiToItem(data);
-          item.subtitle = subtitle; // preserve manual subtitle
           items.push(item);
       }
   } catch (e) { console.error(e); }

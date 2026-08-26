@@ -64,12 +64,12 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [x] Remover el campo `NSFW` del modelo [`Recurso`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py) en el backend y limpiar las tablas.
   - [x] Eliminar badges, botones de filtro y estilos visuales NSFW en [`index.html`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/index.html) y [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js).
 
-### [ ] Centrar modal y adaptar detalles por categoría
+### [x] Centrar modal y adaptar detalles por categoría
 - **Problema:** El modal no se posiciona en el centro de la pantalla y la estructura de los campos no varía según la categoría del ítem.
 - **Razón / Contexto:** Estética y experiencia de usuario (UX): un juego necesita ficha de "tienda/mod" mientras que un libro requiere "saga/autor".
 - **Definición de Hecho (DoD):**
-  - [ ] Centrar los `<dialog>` utilizando Flexbox/Grid o posicionamiento absoluto centrado en CSS [`style.css`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/style.css).
-  - [ ] Implementar lógica dinámica en [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js) para ocultar/mostrar secciones de la ficha editorial según la categoría activa del elemento.
+  - [x] Centrar los `<dialog>` utilizando Flexbox/Grid o posicionamiento absoluto centrado en CSS [`style.css`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/style.css).
+  - [x] Implementar lógica dinámica en [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js) para ocultar/mostrar secciones de la ficha editorial según la categoría activa del elemento.
 
 ### [x] Logs y trazabilidad del sistema
 - **Problema:** Falta de logs del servidor ante fallos o llamadas API externas.

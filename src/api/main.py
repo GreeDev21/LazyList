@@ -85,6 +85,7 @@ class ManualItemRequest(BaseModel):
     category: str
     titulo: str
     estado: str
+    fields: Optional[dict] = None
 
 @app.post("/api/items/manual")
 def create_manual_item(req: ManualItemRequest):
@@ -99,11 +100,21 @@ def create_manual_item(req: ManualItemRequest):
         import inspect
         entity_class = inspect.signature(repo.save).parameters['item'].annotation
         
-        item = entity_class(
-            id=item_id,
-            titulo=req.titulo,
-            estado=req.estado
-        )
+        kwargs = {"id": item_id, "estado": req.estado}
+        
+        if hasattr(entity_class, 'title'):
+            kwargs['title'] = req.titulo
+        elif hasattr(entity_class, 'title_romaji'):
+            kwargs['title_romaji'] = req.titulo
+        elif hasattr(entity_class, 'titulo'):
+            kwargs['titulo'] = req.titulo
+            
+        if req.fields:
+            for k, v in req.fields.items():
+                if hasattr(entity_class, k):
+                    kwargs[k] = v
+                    
+        item = entity_class(**kwargs)
         repo.save(item)
         
         r_dict = item.model_dump()
