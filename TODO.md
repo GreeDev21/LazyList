@@ -21,12 +21,12 @@ Para cada issue o tarea, completamos los siguientes tres campos:
 
 A continuación se estructuran los ítems de tu libreta bajo el formato propuesto, incorporando los hallazgos tras revisar el código del proyecto:
 
-### [ ] Frontend no identificado en la arquitectura
+### [x] Frontend no identificado en la arquitectura
 - **Problema:** Dudas sobre la ubicación física del frontend.
 - **Razón / Contexto:** Al abrir el proyecto no queda claro a primera vista dónde se ubica la UI respecto a la estructura de carpetas de Python (`src/domain`, `src/infrastructure`).
 - **Definición de Hecho (DoD):**
   - [x] Ubicar los archivos frontend: confirmados en el directorio `/static` ([`index.html`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/index.html), [`style.css`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/style.css), [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js)). FastAPI los monta en [`main.py`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/api/main.py#L63).
-  - [ ] Documentar brevemente esta arquitectura en el README del proyecto para evitar futuras confusiones.
+  - [x] Documentar detalladamente esta arquitectura en [`docs/arquitectura.md`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/docs/arquitectura.md) para evitar futuras confusiones.
 
 ### [ ] Comportamiento y origen de datos de YouTube
 - **Problema:** Cargar un video de YouTube no extrae el nombre del canal.
