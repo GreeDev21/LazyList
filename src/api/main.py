@@ -116,7 +116,6 @@ class UpdateRequest(BaseModel):
     estado: Optional[str] = None
     notas: Optional[str] = None
     calificacion: Optional[float] = None
-    nsfw: Optional[bool] = None
 
 @app.get("/api/items")
 def get_all_items():
@@ -157,8 +156,6 @@ def update_item(category: str, item_id: str, req: UpdateRequest):
             item.notas = req.notas
         if req.calificacion is not None:
             item.calificacion = req.calificacion
-        if req.nsfw is not None and hasattr(item, 'nsfw'):
-            item.nsfw = req.nsfw
                 
         repo.save(item)
         return {"status": "ok"}

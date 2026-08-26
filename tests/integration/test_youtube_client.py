@@ -47,7 +47,6 @@ def test_get_youtube_details(youtube_client):
     assert details["url"] == url
     assert details["creado_autor"] == "Rick Astley"
     assert details["tipo"] == "Video"
-    assert details["NSFW"] is False
 
 def test_unsupported_category(youtube_client):
     with pytest.raises(NotImplementedError):

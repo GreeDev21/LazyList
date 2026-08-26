@@ -37,7 +37,7 @@ def test_libro_creation():
     assert l.titulo == "Soft Skills"
 
 def test_recurso_creation():
-    r = Recurso(titulo="FastAPI Tutorial", url="https://youtube.com/...", creado_autor="Codigofacilito", volver_a_ver=True, notas="Muy bueno", tipo="Video", NSFW=False)
+    r = Recurso(titulo="FastAPI Tutorial", url="https://youtube.com/...", creado_autor="Codigofacilito", volver_a_ver=True, notas="Muy bueno", tipo="Video")
     assert r.url.startswith("http")
 
 def test_juego_creation():

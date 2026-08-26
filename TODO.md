@@ -57,12 +57,12 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
   - [ ] Diseñar y programar una interfaz (dentro del modal manual o en una vista dedicada) para pegar múltiples líneas/URLs/títulos.
   - [ ] Modificar el endpoint del backend para procesar colecciones de ítems y retornarlos de forma eficiente en un solo batch.
 
-### [ ] Eliminación de opciones NSFW
+### [x] Eliminación de opciones NSFW
 - **Problema:** Quitar las opciones y marcas NSFW de la aplicación.
 - **Razón / Contexto:** Decisión de uso: no se guardará contenido adulto y se quiere evitar la visualización accidental de marcas relacionadas.
 - **Definición de Hecho (DoD):**
-  - [ ] Remover el campo `NSFW` del modelo [`Recurso`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py#L107) en el backend y limpiar las tablas.
-  - [ ] Eliminar badges, botones de filtro y estilos visuales NSFW en [`index.html`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/index.html) y [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js).
+  - [x] Remover el campo `NSFW` del modelo [`Recurso`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/src/domain/entities.py) en el backend y limpiar las tablas.
+  - [x] Eliminar badges, botones de filtro y estilos visuales NSFW en [`index.html`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/index.html) y [`app.js`](file:///c:/Users/aguse/Desktop/Workspace/Proyectos/Web/Apps/LazyList/static/app.js).
 
 ### [ ] Centrar modal y adaptar detalles por categoría
 - **Problema:** El modal no se posiciona en el centro de la pantalla y la estructura de los campos no varía según la categoría del ítem.

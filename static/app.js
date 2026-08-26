@@ -66,7 +66,6 @@ function apiToItem(apiData) {
     title: apiData.title || apiData.titulo || apiData.nombre || apiData.title_romaji || "Sin título",
     subtitle: subtitleFor(apiData, apiData.category),
     state: apiData.estado || "pendiente",
-    nsfw: apiData.nsfw || false,
     demo: false,
     notas: apiData.notas || "",
     calificacion: apiData.calificacion,
@@ -95,8 +94,7 @@ async function updateItemAPI(item) {
       body: JSON.stringify({
         estado: item.state,
         notas: item.notas,
-        calificacion: item.calificacion,
-        nsfw: item.nsfw
+        calificacion: item.calificacion
       })
     });
   } catch (e) { console.error(e); }
@@ -110,9 +108,9 @@ async function deleteItemAPI(item) {
 
 function loadSettings() {
   try {
-    return Object.assign({ nsfwHidden: true, view: "grid" }, JSON.parse(localStorage.getItem(LS_SETTINGS) || "{}"));
+    return Object.assign({ view: "grid" }, JSON.parse(localStorage.getItem(LS_SETTINGS) || "{}"));
   } catch (e) {
-    return { nsfwHidden: true, view: "grid" };
+    return { view: "grid" };
   }
 }
 
@@ -141,14 +139,13 @@ function renderRail() {
 }
 
 function categoryCount(catKey) {
-  const pool = settings.nsfwHidden ? items.filter((i) => !i.nsfw) : items;
+  const pool = items;
   if (catKey === "todo") return pool.length;
   return pool.filter((i) => i.category === catKey).length;
 }
 
 function filteredItems() {
   return items.filter((i) => {
-    if (settings.nsfwHidden && i.nsfw) return false;
     if (activeCategory !== "todo" && i.category !== activeCategory) return false;
     if (activeState !== "todos" && i.state !== activeState) return false;
     return true;
@@ -198,13 +195,11 @@ function cardHTML(item) {
   const ratingChip = item.calificacion
     ? `<span class="chip-rating">${ICONS.starSolid}<span>${fmtRating(item.calificacion)}</span></span>`
     : "";
-  const nsfwCls = item.nsfw ? " is-nsfw" : "";
   return `
-    <article class="card${nsfwCls}" data-id="${item.id}" data-cat="${item.category}" tabindex="0" aria-label="Ver detalle de ${escapeHtml(item.title)}">
+    <article class="card" data-id="${item.id}" data-cat="${item.category}" tabindex="0" aria-label="Ver detalle de ${escapeHtml(item.title)}">
       <div class="card-cover" style="--cover:${meta.gradient}">
         <span class="card-cover-initial">${item.title.charAt(0)}</span>
         ${ICONS[meta.glyph]}
-        <span class="nsfw-badge">${ICONS.eyeOff}<span>NSFW</span></span>
       </div>
       <div class="card-body">
         <div class="card-meta">
@@ -218,9 +213,6 @@ function cardHTML(item) {
           <button class="mini-btn" data-act="state" title="Cambiar estado">
             <span class="dot" style="width:.42rem;height:.42rem;border-radius:999px;background:currentColor"></span>
             ${STATE_LABELS[item.state] || "Estado"}
-          </button>
-          <button class="mini-btn${item.nsfw ? " active" : ""}" data-act="nsfw" title="${item.nsfw ? "Mostrar contenido" : "Marcar como NSFW"}">
-            ${item.nsfw ? ICONS.eye : ICONS.eyeOff}
           </button>
           <button class="mini-btn danger" data-act="delete" title="Eliminar">
             ${ICONS.trash}
@@ -249,10 +241,6 @@ $("#grid").addEventListener("click", async (e) => {
   const act = btn.dataset.act;
   if (act === "state") {
     item.state = STATE_ORDER[(STATE_ORDER.indexOf(item.state) + 1) % STATE_ORDER.length];
-    await updateItemAPI(item);
-    render();
-  } else if (act === "nsfw") {
-    item.nsfw = !item.nsfw;
     await updateItemAPI(item);
     render();
   } else if (act === "delete") {
@@ -296,12 +284,6 @@ document.querySelectorAll("dialog").forEach((d) => d.addEventListener("click", (
   if (e.target === d) d.close();
 }));
 
-function toggleNsfw() {
-  settings.nsfwHidden = !settings.nsfwHidden;
-  saveSettings();
-  render();
-  toast(settings.nsfwHidden ? "Contenido NSFW oculto" : "Contenido NSFW visible");
-}
 
 $("#btn-clear-demo").addEventListener("click", () => {
   items = items.filter((i) => !i.demo);
@@ -384,7 +366,6 @@ function openDetail(item) {
   $("#detail-cover").style.setProperty("--cover", meta.gradient);
   $("#detail-cover-initial").textContent = item.title.charAt(0);
   $("#detail-cover-glyph").innerHTML = ICONS[meta.glyph];
-  $("#detail-nsfw-badge").hidden = !item.nsfw;
   $("#detail-title-text").textContent = item.title;
   $("#detail-sub").textContent = item.subtitle || "";
   $("#detail-chip").textContent = meta.label;
@@ -711,10 +692,6 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") { closeResults(); $("#capture-cat-btn").setAttribute("aria-expanded", "false"); }
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "X" || e.key === "x")) {
-    e.preventDefault();
-    toggleNsfw();
-  }
 });
 
 /* --- toast ---------------------------------------------------------------- */

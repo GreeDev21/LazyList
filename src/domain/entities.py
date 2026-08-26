@@ -104,7 +104,6 @@ class Recurso(SQLModel, table=True):
     volver_a_ver: Optional[bool] = None
     notas: Optional[str] = None
     tipo: Optional[str] = None
-    NSFW: Optional[bool] = False
     calificacion: Optional[int] = None
 
 class Juego(SQLModel, table=True):

@@ -114,6 +114,5 @@ class YouTubeApiClient(ApiClientPort):
             "creado_autor": snippet.get("channelTitle", ""),
             "volver_a_ver": False,
             "notas": "",
-            "tipo": "Video",
-            "NSFW": False
+            "tipo": "Video"
         }
