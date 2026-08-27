@@ -47,8 +47,11 @@ class MangaDexClient(ApiClientPort):
         if category != "mangas":
             raise NotImplementedError(f"MangaDex solo soporta la categoría 'mangas'")
             
-        # Usamos includes[]=author para que MangaDex nos mande los datos del autor incrustados
-        response = self.client.get(f"/manga/{api_id}", params={"includes[]": "author"})
+        # Usamos includes[]=author y includes[]=cover_art para que MangaDex nos mande los metadatos incrustados
+        response = self.client.get(
+            f"/manga/{api_id}",
+            params=[("includes[]", "author"), ("includes[]", "cover_art")]
+        )
         response.raise_for_status()
         
         item = response.json()["data"]
@@ -64,12 +67,16 @@ class MangaDexClient(ApiClientPort):
                 title_english = alt["en"]
                 break
                 
-        # Extraer autor desde las relaciones (relationships)
+        # Extraer autor y portada desde las relaciones (relationships)
         autor_name = None
+        cover_file = None
         for rel in item.get("relationships", []):
-            if rel.get("type") == "author" and "attributes" in rel:
+            if rel.get("type") == "author" and "attributes" in rel and not autor_name:
                 autor_name = rel["attributes"].get("name")
-                break
+            elif rel.get("type") == "cover_art" and "attributes" in rel and not cover_file:
+                cover_file = rel["attributes"].get("fileName")
+                
+        imagen_url = f"https://uploads.mangadex.org/covers/{api_id}/{cover_file}" if cover_file else None
                 
         return {
             "id": f"mdex_{api_id}",
@@ -79,5 +86,6 @@ class MangaDexClient(ApiClientPort):
             "year": attrs.get("year"),
             "autor": autor_name,
             "capitulos": None, # MangaDex no da el conteo total fácilmente, se requiere endpoint /aggregate
-            "genre": [t["attributes"]["name"].get("en") for t in attrs.get("tags", []) if t.get("attributes", {}).get("group") == "genre"]
+            "genre": [t["attributes"]["name"].get("en") for t in attrs.get("tags", []) if t.get("attributes", {}).get("group") == "genre"],
+            "imagen_url": imagen_url
         }

@@ -19,6 +19,7 @@ class Pelicula(SQLModel, table=True):
     origin_country: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
     
 class Serie(SQLModel, table=True):
     __tablename__ = "series"
@@ -33,6 +34,7 @@ class Serie(SQLModel, table=True):
     plataform: Optional[str] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Anime(SQLModel, table=True):
     __tablename__ = "anime"
@@ -46,6 +48,7 @@ class Anime(SQLModel, table=True):
     ended: Optional[str] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Manga(SQLModel, table=True):
     __tablename__ = "mangas"
@@ -58,6 +61,7 @@ class Manga(SQLModel, table=True):
     capitulos: Optional[int] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Comic(SQLModel, table=True):
     __tablename__ = "comics"
@@ -70,6 +74,7 @@ class Comic(SQLModel, table=True):
     status: Optional[str] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Novela(SQLModel, table=True):
     __tablename__ = "novelas"
@@ -82,6 +87,7 @@ class Novela(SQLModel, table=True):
     status: Optional[str] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Libro(SQLModel, table=True):
     __tablename__ = "libros"
@@ -94,6 +100,7 @@ class Libro(SQLModel, table=True):
     orden: Optional[int] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Recurso(SQLModel, table=True):
     __tablename__ = "recursos"
@@ -104,6 +111,7 @@ class Recurso(SQLModel, table=True):
     volver_a_ver: Optional[bool] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None
 
 class Juego(SQLModel, table=True):
     __tablename__ = "juegos"
@@ -114,3 +122,4 @@ class Juego(SQLModel, table=True):
     estado: Optional[str] = None
     notas: Optional[str] = None
     calificacion: Optional[int] = None
+    imagen_url: Optional[str] = None

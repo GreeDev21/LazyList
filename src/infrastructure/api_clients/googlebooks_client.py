@@ -48,6 +48,8 @@ class GoogleBooksClient(ApiClientPort):
         year_str = vol.get("publishedDate", "").split("-")[0]
         year = int(year_str) if year_str.isdigit() else None
         
+        imagen_url = vol.get("imageLinks", {}).get("thumbnail") if vol.get("imageLinks") else None
+        
         return {
             "id": f"gb_{api_id}",
             "titulo": vol.get("title", ""),
@@ -55,5 +57,6 @@ class GoogleBooksClient(ApiClientPort):
             "ano": year,
             "genero": vol.get("categories", []),
             "saga": None, # Google books rara vez da la saga estructurada
-            "orden": None
+            "orden": None,
+            "imagen_url": imagen_url
         }

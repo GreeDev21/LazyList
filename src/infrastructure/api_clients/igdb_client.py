@@ -61,7 +61,7 @@ class IGDBClient(ApiClientPort):
         if category != "juegos":
             raise NotImplementedError()
             
-        body = f'where id = {api_id}; fields name, genres.name, platforms.name, first_release_date, involved_companies.company.name, involved_companies.publisher, websites.*;'
+        body = f'where id = {api_id}; fields name, genres.name, platforms.name, first_release_date, involved_companies.company.name, involved_companies.publisher, websites.*, cover.url;'
         response = self.client.post(
             f"{self.base_url}/games",
             headers=self._get_headers(),
@@ -105,8 +105,17 @@ class IGDBClient(ApiClientPort):
         
         tienda = ", ".join(tiendas_encontradas) if tiendas_encontradas else None
         
+        cover_url = item.get("cover", {}).get("url")
+        imagen_url = None
+        if cover_url:
+            # IGDB retorna URLs relativas al protocolo como '//images.igdb.com/...'
+            if cover_url.startswith("//"):
+                cover_url = "https:" + cover_url
+            imagen_url = cover_url.replace("t_thumb", "t_cover_big")
+            
         return {
             "id": f"igdb_{api_id}",
             "titulo": item.get("name", ""),
-            "tienda": tienda
+            "tienda": tienda,
+            "imagen_url": imagen_url
         }

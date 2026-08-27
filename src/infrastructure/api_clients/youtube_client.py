@@ -107,11 +107,19 @@ class YouTubeApiClient(ApiClientPort):
             
         snippet = items[0].get("snippet", {})
         
+        thumbnails = snippet.get("thumbnails") or {}
+        imagen_url = (
+            thumbnails.get("high", {}).get("url") or 
+            thumbnails.get("medium", {}).get("url") or 
+            thumbnails.get("default", {}).get("url")
+        )
+        
         return {
             "id": f"yt_{video_id}",
             "titulo": snippet.get("title", ""),
             "url": api_id,
             "creado_autor": snippet.get("channelTitle", ""),
             "volver_a_ver": False,
-            "notas": ""
+            "notas": "",
+            "imagen_url": imagen_url
         }

@@ -58,6 +58,8 @@ class ComicVineClient(ApiClientPort):
             if len(people) > 3:
                 escritor_str += " y otros"
                 
+        imagen_url = item.get("image", {}).get("small_url") if item.get("image") else None
+        
         return {
             "id": f"cvine_{api_id}",
             "title": item.get("name", ""),
@@ -65,5 +67,6 @@ class ComicVineClient(ApiClientPort):
             "publisher": item.get("publisher", {}).get("name") if item.get("publisher") else None,
             "capitulos": item.get("count_of_issues"),
             "escritor": escritor_str,
-            "status": "Ended" if item.get("count_of_issues", 0) > 0 else "Ongoing" # Heurística básica
+            "status": "Ended" if item.get("count_of_issues", 0) > 0 else "Ongoing", # Heurística básica
+            "imagen_url": imagen_url
         }

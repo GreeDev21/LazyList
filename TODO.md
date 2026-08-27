@@ -84,11 +84,11 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
 - **Definición de Hecho (DoD):**
   - [x] Modificar el formulario de carga manual para que al cambiar de categoría muestre u oculte inputs específicos (ej. escritor para cómics, autor para libros, url para recursos).
 
-### [ ] Obtener imágenes para los ítems guardados
+### [x] Obtener imágenes para los ítems guardados
 - **Problema:** Los elementos guardados en la colección no muestran o no resuelven correctamente sus imágenes de portada/preview asociadas desde las APIs externas o el scraping.
 - **Razón / Contexto:** Para lograr la experiencia claymórfica visual tipo "estante de colección", cada tarjeta necesita mostrar la portada real del libro, juego, película o recurso en lugar de un marcador genérico de color.
 - **Definición de Hecho (DoD):**
-  - [ ] Verificar que los clientes de API externa extraigan y retornen las URLs de las imágenes de portada (ej. TMDB poster_path, Google Books imageLinks, IGDB cover, etc.).
-  - [ ] Guardar la URL o referencia de la imagen en la base de datos para cada entidad correspondiente en `src/domain/entities.py`.
-  - [ ] Adaptar el frontend (`app.js` y `index.html`) para renderizar las imágenes de portada en la grilla y el modal de detalle, incluyendo un fallback estilizado cuando no haya imagen disponible.
+  - [x] Verificar que los clientes de API externa extraigan y retornen las URLs de las imágenes de portada (ej. TMDB poster_path, Google Books imageLinks, IGDB cover, etc.).
+  - [x] Guardar la URL o referencia de la imagen en la base de datos para cada entidad correspondiente en `src/domain/entities.py`.
+  - [x] Adaptar el frontend (`app.js` y `index.html`) para renderizar las imágenes de portada en la grilla y el modal de detalle, incluyendo un fallback estilizado cuando no haya imagen disponible.
 

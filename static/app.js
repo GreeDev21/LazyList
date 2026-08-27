@@ -195,11 +195,19 @@ function cardHTML(item) {
   const ratingChip = item.calificacion
     ? `<span class="chip-rating">${ICONS.starSolid}<span>${fmtRating(item.calificacion)}</span></span>`
     : "";
+    
+  const coverStyle = item.imagen_url 
+    ? `--cover:url('${item.imagen_url}')` 
+    : `--cover:${meta.gradient}`;
+    
+  const coverContent = item.imagen_url 
+    ? "" 
+    : `<span class="card-cover-initial">${item.title.charAt(0)}</span>${ICONS[meta.glyph]}`;
+
   return `
     <article class="card" data-id="${item.id}" data-cat="${item.category}" tabindex="0" aria-label="Ver detalle de ${escapeHtml(item.title)}">
-      <div class="card-cover" style="--cover:${meta.gradient}">
-        <span class="card-cover-initial">${item.title.charAt(0)}</span>
-        ${ICONS[meta.glyph]}
+      <div class="card-cover" style="${coverStyle}">
+        ${coverContent}
       </div>
       <div class="card-body">
         <div class="card-meta">
@@ -626,9 +634,18 @@ function openDetail(item) {
   if ($("#detail-dialog").open) return;
   detailItem = item;
   const meta = catMeta(item.category);
-  $("#detail-cover").style.setProperty("--cover", meta.gradient);
-  $("#detail-cover-initial").textContent = item.title.charAt(0);
-  $("#detail-cover-glyph").innerHTML = ICONS[meta.glyph];
+  const coverBox = $("#detail-cover");
+  if (item.imagen_url) {
+    coverBox.style.setProperty("--cover", `url('${item.imagen_url}')`);
+    $("#detail-cover-initial").hidden = true;
+    $("#detail-cover-glyph").hidden = true;
+  } else {
+    coverBox.style.setProperty("--cover", meta.gradient);
+    $("#detail-cover-initial").hidden = false;
+    $("#detail-cover-initial").textContent = item.title.charAt(0);
+    $("#detail-cover-glyph").hidden = false;
+    $("#detail-cover-glyph").innerHTML = ICONS[meta.glyph];
+  }
   $("#detail-title-text").textContent = item.title;
   $("#detail-sub").textContent = item.subtitle || "";
   $("#detail-chip").textContent = meta.label;

@@ -68,6 +68,7 @@ class AniListClient(ApiClientPort):
                 genres
                 startDate { year month day }
                 endDate { year month day }
+                coverImage { large }
             }
         }
         '''
@@ -79,6 +80,8 @@ class AniListClient(ApiClientPort):
         title_romaji = item.get("title", {}).get("romaji") or ""
         title_english = item.get("title", {}).get("english") or ""
         
+        imagen_url = item.get("coverImage", {}).get("large") if item.get("coverImage") else None
+        
         if category == "anime":
             return {
                 "id": f"anilist_{api_id}",
@@ -88,7 +91,8 @@ class AniListClient(ApiClientPort):
                 "status": item.get("status"),
                 "genre": item.get("genres", []),
                 "premiered": self._format_date(item.get("startDate")),
-                "ended": self._format_date(item.get("endDate"))
+                "ended": self._format_date(item.get("endDate")),
+                "imagen_url": imagen_url
             }
         elif category == "mangas":
             # Nota: Para el autor, el usuario indicó que combinaremos con MangaDex.
@@ -101,7 +105,8 @@ class AniListClient(ApiClientPort):
                 "year": item.get("startDate", {}).get("year") if item.get("startDate") else None,
                 "autor": None, 
                 "capitulos": item.get("chapters"),
-                "genre": item.get("genres", [])
+                "genre": item.get("genres", []),
+                "imagen_url": imagen_url
             }
         else:
             raise NotImplementedError(f"Categoría {category} no soportada por AniList")

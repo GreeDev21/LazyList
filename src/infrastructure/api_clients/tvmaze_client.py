@@ -37,6 +37,9 @@ class TvMazeClient(ApiClientPort):
         
         show = response.json()
         
+        imagen = show.get("image") or {}
+        imagen_url = imagen.get("medium")
+        
         return {
             "id": f"tvm_{api_id}",
             "title": show.get("name"),
@@ -46,5 +49,6 @@ class TvMazeClient(ApiClientPort):
             "ended": show.get("ended"),
             "plataform": show.get("network", {}).get("name") if show.get("network") else (show.get("webChannel", {}).get("name") if show.get("webChannel") else None),
             "origin_country": [show.get("network", {}).get("country", {}).get("code")] if show.get("network") and show.get("network").get("country") else [],
-            "genre": show.get("genres", [])
+            "genre": show.get("genres", []),
+            "imagen_url": imagen_url
         }

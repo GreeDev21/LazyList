@@ -47,11 +47,15 @@ class UrlScraperClient(ApiClientPort):
                 meta_desc = tree.css_first('meta[name="description"]')
                 desc = meta_desc.attributes.get('content') if meta_desc else ""
                 
+            og_image = tree.css_first('meta[property="og:image"]')
+            imagen_url = og_image.attributes.get('content') if og_image else None
+                
             return [{
                 "api_id": query, # Usamos la URL misma como ID
                 "title": str(title).strip(),
                 "year": "",
-                "overview": str(desc).strip()
+                "overview": str(desc).strip(),
+                "imagen_url": imagen_url
             }]
         except Exception as e:
             logger.error(f"Error scrapeando {query}: {e}", exc_info=True)
@@ -70,8 +74,7 @@ class UrlScraperClient(ApiClientPort):
                 "id": "url_" + str(hash(api_id)),
                 "titulo": "Recurso Desconocido",
                 "url": api_id,
-                "descripcion": "",
-                "tipo": "Link"
+                "imagen_url": None
             }
             
         res = results[0]
@@ -79,6 +82,5 @@ class UrlScraperClient(ApiClientPort):
             "id": "url_" + str(hash(api_id)),
             "titulo": res["title"],
             "url": api_id,
-            "descripcion": res["overview"],
-            "tipo": "Link"
+            "imagen_url": res.get("imagen_url")
         }

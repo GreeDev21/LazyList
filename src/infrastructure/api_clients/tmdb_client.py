@@ -58,6 +58,9 @@ class TMDBClient(ApiClientPort):
                     director = person.get("name")
                     break
                     
+            poster_path = data.get("poster_path")
+            imagen_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
+            
             return {
                 "id": f"tmdb_{api_id}",
                 "title": data.get("title"),
@@ -66,13 +69,17 @@ class TMDBClient(ApiClientPort):
                 "director": director,
                 "duracion": data.get("runtime"),
                 "origin_country": data.get("origin_country", []),
-                "genre": [g["name"] for g in data.get("genres", [])]
+                "genre": [g["name"] for g in data.get("genres", [])],
+                "imagen_url": imagen_url
             }
             
         elif category == "series":
             response = self.client.get(f"/tv/{api_id}", params={"language": "es-ES"})
             response.raise_for_status()
             data = response.json()
+            
+            poster_path = data.get("poster_path")
+            imagen_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
             
             return {
                 "id": f"tmdb_tv_{api_id}",
@@ -83,7 +90,8 @@ class TMDBClient(ApiClientPort):
                 "ended": data.get("last_air_date"),
                 "plataform": ", ".join([n["name"] for n in data.get("networks", [])]) if data.get("networks") else None,
                 "origin_country": data.get("origin_country", []),
-                "genre": [g["name"] for g in data.get("genres", [])]
+                "genre": [g["name"] for g in data.get("genres", [])],
+                "imagen_url": imagen_url
             }
         else:
             raise NotImplementedError(f"Categoría {category} no soportada")
