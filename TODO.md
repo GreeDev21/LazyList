@@ -90,5 +90,24 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
 - **Definición de Hecho (DoD):**
   - [x] Verificar que los clientes de API externa extraigan y retornen las URLs de las imágenes de portada (ej. TMDB poster_path, Google Books imageLinks, IGDB cover, etc.).
   - [x] Guardar la URL o referencia de la imagen en la base de datos para cada entidad correspondiente en `src/domain/entities.py`.
-  - [x] Adaptar el frontend (`app.js` y `index.html`) para renderizar las imágenes de portada en la grilla y el modal de detalle, incluyendo un fallback estilizado cuando no haya imagen disponible.
+  - [x] Adaptar el frontend (`app.js` y `index.html`) para renderizar las imágenes de portada en la grilla y el modal de detalle, incluyendo un fallback de gradiente de color cuando no haya imagen disponible.
 
+---
+
+## Nuevas Ideas y Características Pendientes
+
+### [ ] Buscador interno de la colección
+- **Problema:** No se puede buscar un elemento específico dentro de la colección guardada localmente.
+- **Razón / Contexto:** A medida que la biblioteca crece, se vuelve difícil encontrar un ítem desplazándose manualmente por la grilla.
+- **Definición de Hecho (DoD):**
+  - [ ] Diseñar e incorporar una barra de búsqueda de texto en la cabecera del frontend.
+  - [ ] Filtrar en tiempo real los ítems visibles en la grilla según el título, autor/director o notas que coincidan con la búsqueda.
+  - [ ] Garantizar que el filtro de búsqueda combine de forma limpia con los filtros de categoría seleccionados.
+
+### [ ] Botón de recomendación "Al azar"
+- **Problema:** Indecisión de uso por parálisis de análisis ("no sé qué ver o leer hoy").
+- **Razón / Contexto:** Ayuda al usuario a elegir de manera aleatoria un contenido de su colección.
+- **Definición de Hecho (DoD):**
+  - [ ] Añadir un botón con estilo claymórfico interactivo ("Al azar" / "Sorpréndeme").
+  - [ ] Al hacer clic, seleccionar un elemento aleatorio respetando la categoría o filtro activo en ese momento (o de toda la base de datos si no hay filtro).
+  - [ ] Abrir el modal de detalle del elemento seleccionado aleatoriamente con una animación de resalto temporal.
