@@ -94,6 +94,18 @@ A continuación se estructuran los ítems de tu libreta bajo el formato propuest
 
 ---
 
+## Tareas Críticas de Seguridad (¡IMPORTANTE!)
+
+### [ ] Fuga de Credenciales y Secretos (Alerta GitGuardian)
+- **Problema:** GitGuardian detectó nombres de usuario, correos electrónicos o secretos (tokens y API keys) expuestos públicamente al cambiar la visibilidad del repositorio a público.
+- **Razón / Contexto:** Subir secretos al historial de Git expone las credenciales a bots automatizados que escanean repositorios públicos de manera constante. Las claves afectadas deben ser revocadas inmediatamente.
+- **Definición de Hecho (DoD):**
+  - [ ] **Rotar Claves (CRÍTICO):** Invalidar y re-generar inmediatamente todas las claves/tokens en los proveedores de las APIs afectadas (TMDB, YouTube, Twitch/IGDB, ComicVine, etc.). *Considerar las claves viejas comprometidas*.
+  - [ ] **Revisar `.gitignore`:** Asegurar que `.env`, `lazylinks.db` y otros archivos sensibles estén listados en el `.gitignore` y no estén siendo rastreados en Git.
+  - [ ] **Limpiar Historial de Git:** Ejecutar una purga del historial de commits usando herramientas como `git-filter-repo` o BFG Repo-Cleaner para remover físicamente los archivos sensibles del historial histórico.
+
+---
+
 ## Nuevas Ideas y Características Pendientes
 
 ### [ ] Buscador interno de la colección
