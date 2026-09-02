@@ -7,14 +7,13 @@ class ComicVineClient(ApiClientPort):
     def __init__(self):
         self.base_url = "https://comicvine.gamespot.com/api"
         self.api_key = os.getenv("COMICVINE_API_KEY")
-        if not self.api_key:
-            raise ValueError("COMICVINE_API_KEY no configurada en el .env")
-            
         # ComicVine exige un User-Agent identificatorio
         headers = {"User-Agent": "LazyListApp/1.0 (Personal Content Tracker)"}
         self.client = httpx.Client(base_url=self.base_url, headers=headers, timeout=15.0)
 
     def search(self, query: str, category: str) -> List[Dict[str, Any]]:
+        if not self.api_key:
+            raise ValueError("COMICVINE_API_KEY no configurada en el .env")
         if category != "comics":
             raise NotImplementedError(f"ComicVine solo soporta 'comics'")
             
@@ -39,6 +38,8 @@ class ComicVineClient(ApiClientPort):
         return results
 
     def get_details(self, api_id: str, category: str) -> Dict[str, Any]:
+        if not self.api_key:
+            raise ValueError("COMICVINE_API_KEY no configurada en el .env")
         if category != "comics":
             raise NotImplementedError()
             

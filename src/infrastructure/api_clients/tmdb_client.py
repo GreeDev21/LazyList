@@ -6,17 +6,16 @@ from src.domain.ports.api_client import ApiClientPort
 class TMDBClient(ApiClientPort):
     def __init__(self):
         self.token = os.getenv("TMDB_READ_TOKEN")
-        if not self.token:
-            raise ValueError("TMDB_READ_TOKEN no está configurado en las variables de entorno.")
-            
         self.headers = {
             "Authorization": f"Bearer {self.token}",
             "accept": "application/json"
-        }
+        } if self.token else {}
         self.base_url = "https://api.themoviedb.org/3"
         self.client = httpx.Client(base_url=self.base_url, headers=self.headers, timeout=10.0)
 
     def search(self, query: str, category: str) -> List[Dict[str, Any]]:
+        if not self.token:
+            raise ValueError("TMDB_READ_TOKEN no está configurado en las variables de entorno.")
         if category == "peliculas":
             endpoint = "/search/movie"
         elif category == "series":
@@ -45,6 +44,8 @@ class TMDBClient(ApiClientPort):
         return results
 
     def get_details(self, api_id: str, category: str) -> Dict[str, Any]:
+        if not self.token:
+            raise ValueError("TMDB_READ_TOKEN no está configurado en las variables de entorno.")
         if category == "peliculas":
             response = self.client.get(f"/movie/{api_id}", params={"language": "es-ES", "append_to_response": "credits"})
             response.raise_for_status()

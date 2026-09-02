@@ -28,6 +28,7 @@ def run_build(mode: str = "onedir"):
         "--noconsole",
         f"--{mode}",
         "--clean",
+        "-y",
         "--add-data", "static;static",
         # Imports dinámicos necesarios para FastAPI, Uvicorn, SQLModel y WebView
         "--hidden-import", "uvicorn.logging",
@@ -56,6 +57,10 @@ def run_build(mode: str = "onedir"):
     if os.path.exists(".env.example") and os.path.exists(dist_dir):
         shutil.copy(".env.example", os.path.join(dist_dir, ".env.example"))
         print("Copiado .env.example a la carpeta de distribución.")
+        
+    if os.path.exists(".env") and os.path.exists(dist_dir):
+        shutil.copy(".env", os.path.join(dist_dir, ".env"))
+        print("Copiado .env existente a la carpeta de distribución.")
         
     print("\n=======================================================")
     print(f"¡Compilación finalizada con éxito!")
