@@ -1,9 +1,10 @@
 import os
 import logging
 from dotenv import load_dotenv
+from src.config.paths import STATIC_DIR, ENV_PATH
 
 # Cargar variables de entorno desde el archivo .env antes de importar módulos que las necesiten
-load_dotenv()
+load_dotenv(dotenv_path=ENV_PATH)
 
 # Configurar el sistema de logging global
 logging.basicConfig(
@@ -69,11 +70,11 @@ app.add_middleware(
 )
 
 # Frontend estático (vanilla + Tailwind, servido por FastAPI)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/", include_in_schema=False)
 def index():
-    return FileResponse("static/index.html")
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 from typing import Optional
 

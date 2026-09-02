@@ -60,4 +60,7 @@ Thumbs.db
 nul
 .cache_ggshield
 
-
+# PyInstaller build artifacts
+dist/
+build/
+*.spec
