@@ -1,18 +1,22 @@
 import os
 import logging
 from dotenv import load_dotenv
-from src.config.paths import STATIC_DIR, ENV_PATH
+from src.config.paths import STATIC_DIR, ENV_PATH, LOG_PATH
 
 # Cargar variables de entorno desde el archivo .env antes de importar módulos que las necesiten
 load_dotenv(dotenv_path=ENV_PATH)
 
-# Configurar el sistema de logging global
+# Configurar el sistema de logging global tanto a consola como a archivo lazylist.log
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_PATH, encoding="utf-8", mode="a"),
+        logging.StreamHandler()
+    ]
 )
 logger = logging.getLogger("lazylist")
-logger.info("Sistema de logs de LazyList inicializado con éxito.")
+logger.info(f"Sistema de logs de LazyList inicializado con éxito. Archivo de log: {LOG_PATH}")
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -172,7 +176,9 @@ def create_bulk_items(req: BulkItemRequest):
                     continue  # Si ya existe, saltear para evitar duplicados
                 
                 item_id = f"manual_{uuid.uuid4().hex[:8]}"
-                kwargs = {"id": item_id, "estado": req.estado}
+                kwargs = {"id": item_id}
+                if hasattr(entity_class, 'estado'):
+                    kwargs['estado'] = req.estado
                 
                 if hasattr(entity_class, 'title'):
                     kwargs['title'] = title
@@ -192,9 +198,11 @@ def create_bulk_items(req: BulkItemRequest):
                 created_items.append(r_dict)
                 
             session.commit()
+            logger.info(f"Carga por lote completada con éxito. Creados: {len(created_items)} ítems en categoría '{req.category}'.")
             
         return created_items
     except Exception as e:
+        logger.error(f"Error en carga por lote para categoría '{req.category}': {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/items/enrich")

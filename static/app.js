@@ -532,12 +532,17 @@ $("#manual-form").addEventListener("submit", async (e) => {
             dataList.forEach((data) => {
                 items.push(apiToItem(data));
             });
+            $("#manual-dialog").close();
+            render();
+            toast(`Guardados ${dataList.length} ítems en ${meta.label}`);
+        } else {
+            const errData = await res.json().catch(() => ({}));
+            toast(`Error al guardar: ${errData.detail || "Error interno"}`, "error");
         }
-    } catch (err) { console.error(err); }
-    
-    $("#manual-dialog").close();
-    render();
-    toast(`Guardados ${cleanedLines.length} ítems en ${meta.label}`);
+    } catch (err) {
+        console.error(err);
+        toast("Error de conexión al guardar lote", "error");
+    }
   }
 });
 
