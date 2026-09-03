@@ -94,6 +94,7 @@ class ManualItemRequest(BaseModel):
 
 @app.post("/api/items/manual")
 def create_manual_item(req: ManualItemRequest):
+    logger.info(f"POST /api/items/manual: categoria='{req.category}', titulo='{req.titulo}'")
     try:
         repo = repos.get(req.category)
         if not repo:
@@ -105,7 +106,9 @@ def create_manual_item(req: ManualItemRequest):
         import inspect
         entity_class = inspect.signature(repo.save).parameters['item'].annotation
         
-        kwargs = {"id": item_id, "estado": req.estado}
+        kwargs = {"id": item_id}
+        if hasattr(entity_class, 'estado'):
+            kwargs['estado'] = req.estado
         
         if hasattr(entity_class, 'title'):
             kwargs['title'] = req.titulo
@@ -121,11 +124,13 @@ def create_manual_item(req: ManualItemRequest):
                     
         item = entity_class(**kwargs)
         repo.save(item)
+        logger.info(f"Item manual creado exitosamente: id='{item_id}', categoria='{req.category}'")
         
         r_dict = item.model_dump()
         r_dict["category"] = req.category
         return r_dict
     except Exception as e:
+        logger.error(f"Error al crear item manual ({req.category}): {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 class BulkItemRequest(BaseModel):
@@ -140,6 +145,7 @@ class EnrichRequest(BaseModel):
 
 @app.post("/api/items/bulk")
 def create_bulk_items(req: BulkItemRequest):
+    logger.info(f"POST /api/items/bulk: categoria='{req.category}', items_count={len(req.items)}, estado='{req.estado}'")
     try:
         repo = repos.get(req.category)
         if not repo:

@@ -428,6 +428,7 @@ $("#btn-manual").addEventListener("click", () => {
   $("#manual-bulk-fields").hidden = true;
 
   seedManualCategories();
+  seedBulkCategories();
   $("#manual-state").querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b.dataset.state === manualState));
   $("#manual-title-input").value = "";
   const bulkTextarea = $("#manual-bulk-textarea");
