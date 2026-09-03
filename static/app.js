@@ -444,9 +444,7 @@ $("#manual-state").addEventListener("click", (e) => {
   $("#manual-state").querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-pressed", b === btn));
 });
 
-$("#manual-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  
+async function submitManualForm() {
   if (manualMode === "single") {
     const title = $("#manual-title-input").value.trim();
     if (!title) { $("#manual-title-input").focus(); return; }
@@ -469,14 +467,15 @@ $("#manual-form").addEventListener("submit", async (e) => {
       }
     }
 
-    const meta = catMeta(manualCategory);
+    const cat = manualCategory || (activeCategory !== "todo" ? activeCategory : "peliculas");
+    const meta = catMeta(cat);
     
     try {
         const res = await fetch(`${API_BASE}/items/manual`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
-                category: manualCategory, 
+                category: cat, 
                 titulo: title, 
                 estado: manualState,
                 fields: extraFields
@@ -486,12 +485,17 @@ $("#manual-form").addEventListener("submit", async (e) => {
             const data = await res.json();
             const item = apiToItem(data);
             items.push(item);
+            $("#manual-dialog").close();
+            render();
+            toast(`Guardado en ${meta.label}`);
+        } else {
+            const errData = await res.json().catch(() => ({}));
+            toast(`Error: ${errData.detail || "Error al guardar"}`, "error");
         }
-    } catch (err) { console.error(err); }
-    
-    $("#manual-dialog").close();
-    render();
-    toast(`Guardado en ${meta.label}`);
+    } catch (err) {
+        console.error(err);
+        toast("Error de red al guardar", "error");
+    }
   } else {
     const text = $("#manual-bulk-textarea").value.trim();
     if (!text) { $("#manual-bulk-textarea").focus(); return; }
@@ -516,14 +520,15 @@ $("#manual-form").addEventListener("submit", async (e) => {
     
     if (uniqueLines.length === 0) { $("#manual-bulk-textarea").focus(); return; }
     
-    const meta = catMeta(bulkCategory);
+    const cat = bulkCategory || (activeCategory !== "todo" ? activeCategory : "peliculas");
+    const meta = catMeta(cat);
     
     try {
         const res = await fetch(`${API_BASE}/items/bulk`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
-                category: bulkCategory, 
+                category: cat, 
                 estado: manualState,
                 items: uniqueLines
             })
@@ -538,13 +543,18 @@ $("#manual-form").addEventListener("submit", async (e) => {
             toast(`Guardados ${dataList.length} ítems en ${meta.label}`);
         } else {
             const errData = await res.json().catch(() => ({}));
-            toast(`Error al guardar: ${errData.detail || "Error interno"}`, "error");
+            toast(`Error al guardar lote: ${errData.detail || "Error interno"}`, "error");
         }
     } catch (err) {
         console.error(err);
         toast("Error de conexión al guardar lote", "error");
     }
   }
+}
+
+$("#manual-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  await submitManualForm();
 });
 
 /* --- detail dialog -------------------------------------------------------- */
