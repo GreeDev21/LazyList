@@ -557,6 +557,14 @@ $("#manual-form").addEventListener("submit", async (e) => {
   await submitManualForm();
 });
 
+const manualSubmitBtn = $("#manual-submit-btn");
+if (manualSubmitBtn) {
+  manualSubmitBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await submitManualForm();
+  });
+}
+
 /* --- detail dialog -------------------------------------------------------- */
 let detailItem = null;
 let notesTimer;

@@ -26,8 +26,9 @@ class ServerThread(threading.Thread):
             app=app,
             host=self.host,
             port=self.port,
-            log_level="warning",
-            loop="asyncio"
+            log_level="info",
+            loop="asyncio",
+            log_config=None
         )
         self.server = uvicorn.Server(config=self.config)
 
@@ -56,8 +57,8 @@ def main():
         min_size=(900, 600)
     )
 
-    # Iniciar la interfaz gráfica. Esto bloquea el hilo principal hasta que se cierre la ventana.
-    webview.start(private_mode=False)
+    # Iniciar la interfaz gráfica en modo privado (sin caché persistente) y con herramientas de inspección (F12) habilitadas
+    webview.start(private_mode=True, debug=True)
 
     # Apagar el servidor y liberar el puerto
     server.stop()

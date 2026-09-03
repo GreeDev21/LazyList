@@ -7,15 +7,20 @@ from src.config.paths import STATIC_DIR, ENV_PATH, LOG_PATH
 load_dotenv(dotenv_path=ENV_PATH)
 
 # Configurar el sistema de logging global tanto a consola como a archivo lazylist.log
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_PATH, encoding="utf-8", mode="a"),
-        logging.StreamHandler()
-    ]
-)
+file_handler = logging.FileHandler(LOG_PATH, encoding="utf-8", mode="a")
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(formatter)
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+root_logger.addHandler(file_handler)
+root_logger.addHandler(logging.StreamHandler())
+
+# Asegurar que uvicorn y lazylist escriban en el archivo de log
+logging.getLogger("uvicorn").addHandler(file_handler)
+logging.getLogger("uvicorn.access").addHandler(file_handler)
 logger = logging.getLogger("lazylist")
+logger.addHandler(file_handler)
 logger.info(f"Sistema de logs de LazyList inicializado con éxito. Archivo de log: {LOG_PATH}")
 
 from fastapi import FastAPI, Depends, HTTPException
